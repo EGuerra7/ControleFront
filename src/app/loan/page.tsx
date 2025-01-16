@@ -70,7 +70,7 @@ export default function Loan(){
                                                 name={`product.${index}.productId`}
                                                 control={control}
                                             />
-                                            <Input {...register(`product.${index}.loan_quantity`, { valueAsNumber: true })} size={4} placeholder="Qtd."/>
+                                            <Input {...register(`product.${index}.loan_quantity`, { valueAsNumber: true })} className="text-center" size={1} placeholder="Qtd."/>
                                             <Button type="button" variant={"ghost"} size={"sm"} disabled={fields.length === 1} onClick={() => handleRemoveProduct(index)}>
                                                 <CircleX />
                                             </Button>

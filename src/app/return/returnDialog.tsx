@@ -1,9 +1,9 @@
 "use client"
 
 import { z } from "zod";
-import { Button } from "./ui/button";
-import { DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
-import { Input } from "./ui/input";
+import { Button } from "../../components/ui/button";
+import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog";
+import { Input } from "../../components/ui/input";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -46,13 +46,14 @@ export default function ReturnDialog(){
         <DialogContent className="max-w-md w-full flex flex-col justify-center items-center gap-10">
             <DialogHeader>
                 <DialogTitle>À devolver</DialogTitle>
+                <DialogDescription></DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit(handleReturn)}>
                 <div className="w-[70%] flex flex-col gap-2">
                     {fields.map((field, index) => {
                         return (
-                            <>
-                                <div key={field.id} className="grid grid-cols-2 gap-[25%]">
+                            <div key={field.id}>
+                                <div  className="grid grid-cols-2 gap-[25%]">
                                     <span>{field.name}</span>
                                     <Input {...register(`products.${index}.return_quantity`)}  type="number" />
                                     <input
@@ -61,7 +62,7 @@ export default function ReturnDialog(){
                                     value={field.projectId} 
                                     />
                                 </div>
-                            </>
+                            </div>
                         )
                     })}
                 </div>

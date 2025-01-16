@@ -1,6 +1,6 @@
 import { z } from "zod";
 import SelectInput from "./selectInput";
-import { DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
+import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useForm } from "react-hook-form";
@@ -31,6 +31,7 @@ export default function CreateProductDialog(){
         <DialogContent className="max-w-2xl max-h-[50%] h-full w-full px-20 py-5">
             <DialogHeader>
                 <DialogTitle className="text-center">Adicionar produto</DialogTitle>
+                <DialogDescription></DialogDescription>
             </DialogHeader>
             <form className="flex flex-col gap-5" onSubmit={handleSubmit(handleCreateProduct)}>
                 <div className="flex flex-col gap-3">

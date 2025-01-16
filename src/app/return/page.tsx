@@ -1,4 +1,4 @@
-import ReturnDialog from "@/components/returnDialog";
+import ReturnDialog from "@/app/return/returnDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, } from "@/components/ui/card";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -15,8 +15,8 @@ export default function Return() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 <Card className="pt-4">
                     <CardContent className="flex flex-col gap-2 text-left">
-                        <span className="text-base"><b className="font-medium">Responsável: </b> Erick Guerra</span>
-                        <span className="text-base"><b className="font-medium">Produtos: </b> Tesoura e Borracha</span>
+                        <span className="text-base"><b className="font-medium">Responsável: </b>Erick Guerra</span>
+                        <span className="text-base"><b className="font-medium">Produtos: </b>Tesoura e Borracha</span>
                     </CardContent>
                     <CardFooter>
                         <Dialog>

@@ -16,7 +16,7 @@ export default function Aside() {
                     </nav>
                 </div>
                 <footer>
-                    <Link href={"/relatorio"}><ReceiptText size={40} absoluteStrokeWidth className=' text-zinc-500 transition-colors hover:text-gray-300' /></Link>
+                    <Link href={"/relatory"}><ReceiptText size={40} absoluteStrokeWidth className=' text-zinc-500 transition-colors hover:text-gray-300' /></Link>
                 </footer>
             </aside>
     );
