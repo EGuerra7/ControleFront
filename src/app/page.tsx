@@ -9,26 +9,15 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Pencil, Search } from "lucide-react"
+import { useSearchParams } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { z } from "zod";
+import { useRouter } from "next/router"
+import SearchProducts from "@/components/searchProducts"
 
-const SearchProductsSchema = z.object({
-  name: z.string().optional(),
-  category: z.string().optional(),
-})
 
-type searchProductSchema = z.infer<typeof SearchProductsSchema>
 
 export default function Home() {
-  const {register, handleSubmit, control } = useForm<searchProductSchema>({
-    resolver: zodResolver(SearchProductsSchema),
-    defaultValues: {
-      name: '',
-      category: '' 
-  },
-  })
-
-  const items = [{name: 'Todas', value: 'all'},{name: "Papelaria", value: "Papelaria"}, {name: "Eletrônicos", value:"eletronics"}, {name: "Marcenaria", value: "Marcenaria"}]
   const products = Array(10).fill({
     id: 1,
     name: "Borracha",
@@ -37,29 +26,13 @@ export default function Home() {
     localization: "Na segunda prateleira, ao lado da janela"
   })
 
-  const handleSearch = (data: searchProductSchema) => {
-    if(!data.name && !data.category){
-      return
-    }
-    console.log(data);
-  }
-
+  
   return (
    <div className="relative flex flex-col gap-6 items-center w-full flex-1 p-6">
     <h1 className="text-[25px] font-medium">Estoque</h1>
     <div className="flex w-[90%] justify-between">
       <div>
-        <form className="flex gap-3" onSubmit={handleSubmit(handleSearch)}>
-          <Input {...register('name')} placeholder="Procure por nome..."/>
-          <SelectInput 
-            control={control} 
-            {...register('category')}  
-            items={items} 
-            width="w-[180px]" 
-            placeholder="Categoria"
-          />
-          <Button type="submit" variant={"secondary"}><Search size={24}/></Button>
-        </form>
+        <SearchProducts />
       </div>
       <Dialog>
         <DialogTrigger asChild>

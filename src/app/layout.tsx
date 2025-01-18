@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Baloo_2 } from "next/font/google";
+import { Baloo_2 } from "next/font/google";
 import "./globals.css";
 import Aside from "@/components/aside";
+import Router from "next/router";
 
 const baloo = Baloo_2({
   variable: "--font-baloo-2",
@@ -26,7 +27,7 @@ export default function RootLayout({
       >
         <Aside />
         <div className="flex ml-[90px] justify-center w-full min-h-screen">
-          {children}
+            {children}
         </div>
       </body>
     </html>
