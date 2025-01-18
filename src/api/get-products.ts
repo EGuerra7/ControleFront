@@ -1,27 +1,27 @@
-import { api } from "@/lib/axios";
+import { api } from '@/lib/axios'
 
 export interface GetProductsQuery {
-    pageIndex: number | null
-    name: string | null,
-    category: string | null,
+  page: number | null
+}
+
+export interface Products {
+  id: string
+  name: string
+  quantity: number
+  localization: string
+  category: string
 }
 
 export interface GetProductResponse {
-    id: string,
-    name: string,
-    quantity: number,
-    localization: string,
-    category: string,
+  products: Products[]
 }
 
-export async function getProduct({ pageIndex, name, category }: GetProductsQuery) {
-    const response = await api.get<GetProductResponse>('/products', {
-        params: {
-            pageIndex,
-            name,
-            category
-        }
-    })
+export async function getProduct({ page }: GetProductsQuery) {
+  const response = await api.get<GetProductResponse>('/products', {
+    params: {
+      page,
+    },
+  })
 
-    return response.data
+  return response.data.products
 }

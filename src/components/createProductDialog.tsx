@@ -1,72 +1,106 @@
-import { z } from "zod";
-import SelectInput from "./selectInput";
-import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "./ui/button";
+import { z } from 'zod'
+import SelectInput from './selectInput'
+import {
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from './ui/dialog'
+import { Input } from './ui/input'
+import { Label } from './ui/label'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Button } from './ui/button'
+import { createProduct } from '@/api/create-product'
 
 const CreateProductBodySchema = z.object({
-    name: z.string(),
-    category: z.string(),
-    quantity: z.coerce.number(),
-    localization: z.string()
+  name: z.string(),
+  category: z.string(),
+  quantity: z.coerce.number(),
+  localization: z.string(),
 })
 
 type createProductSchema = z.infer<typeof CreateProductBodySchema>
 
-export default function CreateProductDialog(){
-    const items = [{name: "Papelaria", value: "Papelaria"}, {name: "Eletrônicos", value:"eletronics"}, {name: "Marcenaria", value: "Marcenaria"}]
-    
-    const {register, handleSubmit, control} = useForm<createProductSchema>({
-        resolver: zodResolver(CreateProductBodySchema)
-    })
+export default function CreateProductDialog() {
+  const items = [
+    { name: 'Papelaria', value: 'Stationery' },
+    { name: 'Eletrônicos', value: 'Eletronics' },
+    { name: 'Marcenaria', value: 'Marcenaria' },
+  ]
 
-    const handleCreateProduct = (data: createProductSchema) => {
-        console.log(data);
+  const { register, handleSubmit, control } = useForm<createProductSchema>({
+    resolver: zodResolver(CreateProductBodySchema),
+  })
+
+  async function handleCreateProduct(data: createProductSchema) {
+    try {
+      await createProduct({
+        name: data.name,
+        category: data.category,
+        localization: data.localization,
+        quantity: data.quantity,
+      })
+      alert('criado')
+    } catch {
+      console.log('error')
     }
+  }
 
-    return (
-        <DialogContent className="max-w-2xl max-h-[50%] h-full w-full px-20 py-5">
-            <DialogHeader>
-                <DialogTitle className="text-center">Adicionar produto</DialogTitle>
-                <DialogDescription></DialogDescription>
-            </DialogHeader>
-            <form className="flex flex-col gap-5" onSubmit={handleSubmit(handleCreateProduct)}>
-                <div className="flex flex-col gap-3">
-                    <div>
-                        <Label className="mb-1" htmlFor="name">Nome:</Label>
-                        <Input {...register('name')}   name="name" type="text"/>
-                    </div>
-                    <div className="grid grid-cols-2 gap-10">
-                        <div>
-                            <Label className="mb-1">Categoria:</Label>
-                            <SelectInput 
-                                control={control} 
-                                {...register('category')}  
-                                items={items} 
-                            />
-                        </div>
-                        <div>
-                            <Label className="mb-1" htmlFor="quantity">Quantidade:</Label>
-                            <Input {...register('quantity')} name="quantity" type="text"/>
-                        </div>  
-                    </div>
-                    <div>
-                        <Label className="mb-1" htmlFor="localization">Localização:</Label>
-                        <Input {...register('localization')} name="localization" type="text"/>
-                    </div>
-                </div>
-                <DialogFooter>
-                    <DialogClose asChild>
-                        <Button type="submit" size={"lg"}>Confirmar</Button>
-                    </DialogClose>
-                </DialogFooter>
-            </form>
-            
-        </DialogContent>
-        
-
-    )
+  return (
+    <DialogContent className="max-w-2xl max-h-[50%] h-full w-full px-20 py-5">
+      <DialogHeader>
+        <DialogTitle className="text-center">Adicionar produto</DialogTitle>
+        <DialogDescription></DialogDescription>
+      </DialogHeader>
+      <form
+        className="flex flex-col gap-5"
+        onSubmit={handleSubmit(handleCreateProduct)}
+      >
+        <div className="flex flex-col gap-3">
+          <div>
+            <Label className="mb-1" htmlFor="name">
+              Nome:
+            </Label>
+            <Input {...register('name')} name="name" type="text" />
+          </div>
+          <div className="grid grid-cols-2 gap-10">
+            <div>
+              <Label className="mb-1">Categoria:</Label>
+              <SelectInput
+                control={control}
+                {...register('category')}
+                items={items}
+              />
+            </div>
+            <div>
+              <Label className="mb-1" htmlFor="quantity">
+                Quantidade:
+              </Label>
+              <Input {...register('quantity')} name="quantity" type="text" />
+            </div>
+          </div>
+          <div>
+            <Label className="mb-1" htmlFor="localization">
+              Localização:
+            </Label>
+            <Input
+              {...register('localization')}
+              name="localization"
+              type="text"
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button type="submit" size={'lg'}>
+              Confirmar
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </form>
+    </DialogContent>
+  )
 }

@@ -1,24 +1,24 @@
-import type { Metadata } from "next";
-import { Baloo_2 } from "next/font/google";
-import "./globals.css";
-import Aside from "@/components/aside";
-import Router from "next/router";
+import type { Metadata } from 'next'
+import { Baloo_2 } from 'next/font/google'
+import './globals.css'
+import Aside from '@/components/aside'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import QueryClientProviderWrapper from '@/lib/query-client-provider'
 
 const baloo = Baloo_2({
-  variable: "--font-baloo-2",
-  subsets: ["latin"],
-});
-
+  variable: '--font-baloo-2',
+  subsets: ['latin'],
+})
 
 export const metadata: Metadata = {
-  title: "Controle Almoxarifado",
-  description: "App created for stock control",
-};
+  title: 'Controle Almoxarifado',
+  description: 'App created for stock control',
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en">
@@ -27,9 +27,11 @@ export default function RootLayout({
       >
         <Aside />
         <div className="flex ml-[90px] justify-center w-full min-h-screen">
-            {children}
+          <NuqsAdapter>
+            <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
+          </NuqsAdapter>
         </div>
       </body>
     </html>
-  );
+  )
 }
