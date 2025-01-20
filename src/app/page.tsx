@@ -15,19 +15,19 @@ import {
 import { Pencil } from 'lucide-react'
 import SearchProducts from '@/components/searchProducts'
 import { useQuery } from '@tanstack/react-query'
-import { useQueryState } from 'nuqs'
-import { getProduct, Products } from '@/api/get-products'
+import { parseAsInteger, useQueryState } from 'nuqs'
+import { getProduct, GetProductResponse } from '@/api/get-products'
 import { z } from 'zod'
 import { getSearchedProducts } from '@/api/get-searched-products'
 
 export default function Home() {
   const [name] = useQueryState('name', { defaultValue: '' })
   const [category] = useQueryState('category', { defaultValue: '' })
-  const [pageIndex] = useQueryState('page', { defaultValue: '1' })
+  const [pageIndex] = useQueryState('page', parseAsInteger.withDefault(1))
 
   const page = z.coerce.number().parse(pageIndex)
 
-  const { data: products } = useQuery<Products[]>({
+  const { data: productsData } = useQuery<GetProductResponse>({
     queryKey: ['products', page],
     queryFn: () =>
       getProduct({
@@ -35,24 +35,34 @@ export default function Home() {
       }),
   })
 
-  const { data: SearchedProducts } = useQuery<Products[] | undefined>({
-    queryKey: ['products', name, category],
+  const products = productsData?.products
+  const productsMeta = productsData?.meta ?? { totalCount: 0, totalPages: 0 }
+
+  const { data: searchedProductsData } = useQuery<
+    GetProductResponse | undefined
+  >({
+    queryKey: ['products', page, name, category],
     queryFn: () =>
       name || category
         ? getSearchedProducts({
-            name,
-            category,
-          })
-        : [],
+          page,
+          name,
+          category,
+        })
+        : undefined,
     enabled: !!(name || category),
   })
 
-  const displayedProducts = SearchedProducts ?? products
+  const searchedProducts = searchedProductsData?.products
+  const searchedMeta = searchedProductsData?.meta
+
+  const displayedProducts = searchedProducts ?? products
+  const displayedMeta = searchedMeta ?? productsMeta
 
   return (
     <div className="relative flex flex-col gap-6 items-center w-full flex-1 p-6">
       <h1 className="text-[25px] font-medium">Estoque</h1>
-      <div className="flex w-[90%] justify-between">
+      <div className="flex w-[95%] justify-between">
         <div>
           <SearchProducts />
         </div>
@@ -64,7 +74,7 @@ export default function Home() {
         </Dialog>
       </div>
 
-      <div className="flex flex-col justify-center w-[90%]">
+      <div className="flex flex-col justify-center w-[95%]">
         <Table className="mb-5">
           <TableHeader>
             <TableRow>
@@ -83,17 +93,30 @@ export default function Home() {
                   <TableCell>{product.category}</TableCell>
                   <TableCell>{product.quantity}</TableCell>
                   <TableCell>{product.localization}</TableCell>
-                  <TableCell>
-                    <Button variant={'ghost'} size={'icon'}>
-                      <Pencil />
-                    </Button>
+                  <TableCell className="text-center">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant={'ghost'} size={'icon'}>
+                          <Pencil />
+                        </Button>
+                      </DialogTrigger>
+                      <CreateProductDialog product={product} />
+                    </Dialog>
                   </TableCell>
                 </TableRow>
               )
             })}
           </TableBody>
         </Table>
-        <Pagination />
+        <div className="flex justify-between">
+          <span className="text-sm">
+            {displayedMeta?.totalCount > 0
+              ? displayedMeta.totalCount
+              : 'Carregando...'}{' '}
+            {displayedMeta?.totalCount === 1 ? 'Item' : 'Items'}
+          </span>
+          <Pagination totalPages={displayedMeta?.totalPages} />
+        </div>
       </div>
     </div>
   )

@@ -86,7 +86,7 @@ export default function Relatory() {
                     <CreateCategoryDialog />
                 </Dialog> 
             </div>
-            <div className="flex flex-col justify-center w-[90%]">
+            <div className="flex flex-col justify-center w-[95%]">
                 <Table>
                     <TableHeader>
                         <TableRow>

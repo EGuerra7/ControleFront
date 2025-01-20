@@ -5,9 +5,10 @@ import { Input } from './ui/input'
 import SelectInput from './selectInput'
 import { Button } from './ui/button'
 import { Search } from 'lucide-react'
-import { useQueryState } from 'nuqs'
+import { parseAsInteger, useQueryState } from 'nuqs'
 
 const SearchProductsSchema = z.object({
+  page: z.coerce.number(),
   name: z.string().optional(),
   category: z.string().optional(),
 })
@@ -16,6 +17,7 @@ type searchProductSchema = z.infer<typeof SearchProductsSchema>
 
 export default function SearchProducts() {
   const [name, setName] = useQueryState('name', { defaultValue: '' })
+  const [pages, setPages] = useQueryState('page', parseAsInteger.withDefault(1))
   const [category, setCategory] = useQueryState('category', {
     defaultValue: '',
   })
@@ -27,13 +29,15 @@ export default function SearchProducts() {
     { name: 'Marcenaria', value: 'Marcenaria' },
   ]
 
-  const { register, handleSubmit, control } = useForm<searchProductSchema>({
-    resolver: zodResolver(SearchProductsSchema),
-    defaultValues: {
-      name: name ?? '',
-      category: category ?? '',
-    },
-  })
+  const { register, handleSubmit, control, reset } =
+    useForm<searchProductSchema>({
+      resolver: zodResolver(SearchProductsSchema),
+      defaultValues: {
+        page: pages ?? 1,
+        name: name ?? '',
+        category: category ?? '',
+      },
+    })
 
   const handleSearch = ({ name, category }: searchProductSchema) => {
     if (!name && !category) {
@@ -51,9 +55,22 @@ export default function SearchProducts() {
     } else {
       setCategory(null)
     }
+
+    setPages(1)
   }
+
+  function handleResetFilters() {
+    reset()
+    setName('')
+    setCategory(null)
+    setPages(1)
+  }
+
   return (
-    <form className="flex gap-3" onSubmit={handleSubmit(handleSearch)}>
+    <form
+      className="flex gap-3 items-center"
+      onSubmit={handleSubmit(handleSearch)}
+    >
       <Input {...register('name')} placeholder="Procure por nome..." />
       <SelectInput
         control={control}
@@ -65,6 +82,12 @@ export default function SearchProducts() {
       <Button type="submit" variant={'secondary'}>
         <Search size={24} />
       </Button>
+
+      {(name !== '' || category !== '') && (
+        <Button onClick={handleResetFilters} size={'sm'} variant={'ghost'}>
+          Limpar filtros
+        </Button>
+      )}
     </form>
   )
 }

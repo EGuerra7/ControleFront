@@ -14,6 +14,10 @@ export interface Products {
 
 export interface GetProductResponse {
   products: Products[]
+  meta: {
+    totalCount: number
+    totalPages: number
+  }
 }
 
 export async function getProduct({ page }: GetProductsQuery) {
@@ -23,5 +27,5 @@ export async function getProduct({ page }: GetProductsQuery) {
     },
   })
 
-  return response.data.products
+  return { products: response.data.products, meta: response.data.meta }
 }

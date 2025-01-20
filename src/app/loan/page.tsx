@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CircleX, Plus } from "lucide-react";
 import { z } from 'zod'
-import { useFieldArray, useForm } from "react-hook-form"   
+import { useFieldArray, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import SelectCombobox from "@/components/selectCombobox";
 
 const CreateLoanFormSchema = z.object({
     responsible: z.string().min(3),
@@ -21,7 +22,7 @@ const CreateLoanFormSchema = z.object({
 
 export type createLoanFormSchema = z.infer<typeof CreateLoanFormSchema>
 
-export default function Loan(){
+export default function Loan() {
     const { control, register, handleSubmit, reset } = useForm<createLoanFormSchema>({
         resolver: zodResolver(CreateLoanFormSchema),
         defaultValues: {
@@ -30,26 +31,26 @@ export default function Loan(){
         },
     })
 
-    function handleAddProduct(){
+    function handleAddProduct() {
         append({ productId: "", loan_quantity: 1 })
     }
 
-    function handleRemoveProduct(index: number){
+    function handleRemoveProduct(index: number) {
         remove(index)
     }
 
     const { fields, append, remove } = useFieldArray({
         control,
         name: "product",
-      });
+    });
 
 
     const onSubmit = (data: any) => {
         console.log(data)
         reset()
-      }
+    }
 
-    const items = [{name: "Borracha", value: "1"}, {name: "Tesoura", value:"2"}]
+    const items = [{ label: "Borracha", value: "2" }, { label: "Tesoura", value: "1" }]
 
     return (
         <>
@@ -58,34 +59,32 @@ export default function Loan(){
                     <h1 className=" text-lg font-medium">Empréstimo</h1>
                     <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
                         <div className="flex flex-col gap-5">
-                            <Input {...register('responsible')} placeholder="Responsável"/>
+                            <Input {...register('responsible')} placeholder="Responsável" />
                             <div className="flex flex-col gap-3">
                                 {fields.map((field, index) => {
                                     return (
                                         <div key={field.id} className="flex gap-4 items-stretch">
-                                            <SelectInput 
-                                                {...register(`product.${index}.productId`)} 
-                                                items={items} width="max-w-[100px]" 
-                                                placeholder="Produto"
+                                            <SelectCombobox
                                                 name={`product.${index}.productId`}
                                                 control={control}
+                                                items={items}
                                             />
-                                            <Input {...register(`product.${index}.loan_quantity`, { valueAsNumber: true })} className="text-center" size={1} placeholder="Qtd."/>
-                                            <Button type="button" variant={"ghost"} size={"sm"} disabled={fields.length === 1} onClick={() => handleRemoveProduct(index)}>
+                                            <Input {...register(`product.${index}.loan_quantity`, { valueAsNumber: true })} className="text-center" size={1} placeholder="Qtd." />
+                                            <Button className="text-gray-600 font-normal" type="button" variant={"ghost"} size={"sm"} disabled={fields.length === 1} onClick={() => handleRemoveProduct(index)}>
                                                 <CircleX />
                                             </Button>
-                                            
+
                                         </div>
                                     )
                                 })}
                             </div>
                             <Button type="button" onClick={handleAddProduct} variant={"outline"} size={"sm"}><Plus /></Button>
                         </div>
-                        
+
                         <Button type="submit" variant={"secondary"}>Confirmar</Button>
                     </form>
                 </div>
-                
+
             </div>
         </>
     )

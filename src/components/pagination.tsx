@@ -7,19 +7,23 @@ import {
   ArrowRightToLine,
 } from 'lucide-react'
 import { Button } from './ui/button'
-import { useState } from 'react'
+import { parseAsInteger, useQueryState } from 'nuqs'
 
-export default function Pagination() {
-  const [pages, setPages] = useState(1)
+interface PaginationProps {
+  totalPages: number
+}
+
+export default function Pagination({ totalPages }: PaginationProps) {
+  const [pages, setPages] = useQueryState('page', parseAsInteger.withDefault(1))
 
   function handlePlusPages() {
-    if (pages < 10) {
+    if (pages < totalPages) {
       setPages(pages + 1)
     }
   }
 
   function handleFinalPages() {
-    setPages(10)
+    setPages(totalPages)
   }
 
   function handleStartPages() {
@@ -40,7 +44,9 @@ export default function Pagination() {
         <ArrowLeft />
       </Button>
       <div className="bg-secondary flex items-center justify-center py-1 px-4 rounded">
-        <span className="text-sm">Página {pages} de 10</span>
+        <span className="text-sm">
+          Página {pages} de {totalPages}
+        </span>
       </div>
       <Button onClick={handlePlusPages} size={'icon'} variant={'secondary'}>
         <ArrowRight />
