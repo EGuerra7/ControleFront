@@ -7,14 +7,6 @@ export interface GetProductsQuery {
   category: string | null
 }
 
-export interface Products {
-  id: string
-  name: string
-  quantity: number
-  localization: string
-  category: string
-}
-
 export async function getSearchedProducts({
   page,
   name,

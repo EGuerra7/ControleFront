@@ -13,12 +13,13 @@ import { Label } from './ui/label'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from './ui/button'
-import { createProduct } from '@/api/create-product'
+
 import { useMutation } from '@tanstack/react-query'
 import { queryClient } from '@/lib/query-client-provider'
-import { Products } from '@/api/get-products'
+import { Products } from '@/api/products/get-products'
 import { useEffect, useState } from 'react'
-import { editProduct } from '@/api/edit-product'
+import { editProduct } from '@/api/products/edit-product'
+import { createProduct } from '@/api/products/create-product'
 
 const CreateProductBodySchema = z.object({
   id: z.string().uuid().optional(),
@@ -34,13 +35,15 @@ interface CreateProductDialogProps {
   product?: createProductSchema
 }
 
-export default function CreateProductDialog({ product }: CreateProductDialogProps) {
+export default function CreateProductDialog({
+  product,
+}: CreateProductDialogProps) {
   const [isEditMode, setIsEditMode] = useState(false)
 
   const { register, handleSubmit, control, reset } =
     useForm<createProductSchema>({
       resolver: zodResolver(CreateProductBodySchema),
-      defaultValues: product
+      defaultValues: product,
     })
 
   useEffect(() => {
@@ -117,11 +120,11 @@ export default function CreateProductDialog({ product }: CreateProductDialogProp
   return (
     <DialogContent className="max-w-2xl max-h-[50%] h-full w-full px-20 py-5">
       <DialogHeader>
-        {isEditMode ?
+        {isEditMode ? (
           <DialogTitle className="text-center">Editar produto</DialogTitle>
-          :
+        ) : (
           <DialogTitle className="text-center">Adicionar produto</DialogTitle>
-        }
+        )}
         <DialogDescription></DialogDescription>
       </DialogHeader>
       <form

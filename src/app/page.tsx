@@ -16,9 +16,9 @@ import { Pencil } from 'lucide-react'
 import SearchProducts from '@/components/searchProducts'
 import { useQuery } from '@tanstack/react-query'
 import { parseAsInteger, useQueryState } from 'nuqs'
-import { getProduct, GetProductResponse } from '@/api/get-products'
+import { getProduct, GetProductResponse } from '@/api/products/get-products'
 import { z } from 'zod'
-import { getSearchedProducts } from '@/api/get-searched-products'
+import { getSearchedProducts } from '@/api/products/get-searched-products'
 
 export default function Home() {
   const [name] = useQueryState('name', { defaultValue: '' })
@@ -45,10 +45,10 @@ export default function Home() {
     queryFn: () =>
       name || category
         ? getSearchedProducts({
-          page,
-          name,
-          category,
-        })
+            page,
+            name,
+            category,
+          })
         : undefined,
     enabled: !!(name || category),
   })
