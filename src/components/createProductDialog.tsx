@@ -14,12 +14,13 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from './ui/button'
 
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { queryClient } from '@/lib/query-client-provider'
 import { Products } from '@/api/products/get-products'
 import { useEffect, useState } from 'react'
 import { editProduct } from '@/api/products/edit-product'
 import { createProduct } from '@/api/products/create-product'
+import { getCategories, GetCategoriesResponse } from '@/api/products/get-categories'
 
 const CreateProductBodySchema = z.object({
   id: z.string().uuid().optional(),
@@ -52,15 +53,21 @@ export default function CreateProductDialog({
       reset(product)
     } else {
       setIsEditMode(false)
-      reset() // Reseta para valores padrão quando em modo de criação
+      reset()
     }
   }, [product, reset])
 
-  const items = [
-    { name: 'Papelaria', value: 'Stationery' },
-    { name: 'Eletrônicos', value: 'Eletronics' },
-    { name: 'Marcenaria', value: 'Marcenaria' },
-  ]
+  const { data: categoriesListData } = useQuery<GetCategoriesResponse>({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+  })
+
+  const categoriesList = categoriesListData?.categories || []
+
+  const categories = categoriesList.map(category => ({
+    name: category.name,
+    value: category.name,
+  }))
 
   async function saveProductApi(data: createProductSchema): Promise<Products> {
     if (isEditMode && product) {
@@ -144,7 +151,7 @@ export default function CreateProductDialog({
               <SelectInput
                 control={control}
                 {...register('category')}
-                items={items}
+                items={categories}
               />
             </div>
             <div>

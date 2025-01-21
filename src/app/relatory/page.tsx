@@ -13,81 +13,150 @@ import { ptBR } from 'date-fns/locale'
 import CreateCategoryDialog from "./createCategoryDialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import LoanStatus, { LoanStatusType } from "@/components/loan-status";
-
-type Loan = {
-    id: string,
-    responsible: string,
-    products:{
-        name: string
-    } [],
-    date: string,
-    status: LoanStatusType
-}
+import { getLoans, GetLoansResponse } from "@/api/loans/get-loans";
+import { parseAsInteger, useQueryState } from "nuqs";
+import { useQuery } from "@tanstack/react-query";
+import Pagination from "@/components/pagination";
+import { searchLoans } from "@/api/loans/search-loans";
 
 const SearchProductsSchema = z.object({
+    page: z.coerce.number(),
     responsible: z.string().optional(),
-    status: z.enum(['LOAN', 'COMPLETED', 'ALL']).optional(),
+    state: z.enum(['LOAN', 'COMPLETED', 'all']).optional(),
 })
 
 export enum LOANSTATUSENUM {
     LOAN = "LOAN",
     COMPLETED = "COMPLETED",
-  }
+    ALL = 'all'
+}
 
 
 type searchProductSchema = z.infer<typeof SearchProductsSchema>
 export default function Relatory() {
-    const items = [
-        {name: 'Todas', value: 'ALL'},
-        {name: "Concluídas", value: "COMPLETED"},
-        {name: "Emprestado", value:"LOAN"},
+    const [responsible, setResponsible] = useQueryState('responsible', {
+        defaultValue: '',
+    })
+    const [stateRaw, setStateRaw] = useQueryState('state', {
+        defaultValue: LOANSTATUSENUM.ALL,
+    })
+
+    const state = Object.values(LOANSTATUSENUM).includes(stateRaw as LOANSTATUSENUM)
+        ? (stateRaw as LOANSTATUSENUM)
+        : LOANSTATUSENUM.ALL
+
+    const [pageIndex, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
+
+    const page = z.coerce.number().parse(pageIndex)
+
+    const statesList = [
+        { name: 'Todas', value: 'all' },
+        { name: "Concluídas", value: "COMPLETED" },
+        { name: "Emprestado", value: "LOAN" },
     ]
 
-    const {register, handleSubmit, control } = useForm<searchProductSchema>({
+    const { register, handleSubmit, control, reset } = useForm<searchProductSchema>({
         resolver: zodResolver(SearchProductsSchema),
         defaultValues: {
-          responsible: '',
-          status: 'ALL',
-      },
-      })
+            page: page ?? 1,
+            responsible: responsible ?? '',
+            state: state ?? null,
+        },
+    })
 
-    const loans: Loan[] = [
-        {id: '1', responsible: 'Erick Guerra', products: [{name: 'Borracha'}, {name: 'Tesoura'}], date: '2023-11-15T14:37:52', status: LOANSTATUSENUM.COMPLETED},
-        {id: '2', responsible: 'Erick Guerra', products: [{name: 'Cola quente'}, {name: 'Pistola de cola quente'}, {name: 'Lapís de cor'}, {name: 'Tinta'}, {name: 'E.V.A'},], date: '2025-01-07T08:21:45' , status: LOANSTATUSENUM.LOAN}
-    ]
+    const { data: loansData } = useQuery<GetLoansResponse>({
+        queryKey: ['loans', page],
+        queryFn: () =>
+            getLoans({
+                page,
+            }),
+    })
 
-    const handleSearch = (data: searchProductSchema) => {
-        if(!data.responsible && !data.status){
+    const loans = loansData?.loans
+    const loansMeta = loansData?.meta ?? { totalCount: 0, totalPages: 0 }
+
+    const { data: searchedLoansData } = useQuery<
+        GetLoansResponse | undefined
+    >({
+        queryKey: ['loans', page, responsible, state],
+        queryFn: async () => {
+            if (responsible || state) {
+                return await searchLoans({
+                    page,
+                    responsible,
+                    state,
+                })
+            }
+            return undefined
+        },
+        enabled: !!(responsible || state),
+    })
+
+    const searchedLoans = searchedLoansData?.loans
+    const searchedLoansMeta = searchedLoansData?.meta
+
+    const displayedLoans = searchedLoans ?? loans
+    const displayedMeta = searchedLoansMeta ?? loansMeta
+
+
+    const handleSearch = ({ responsible, state }: searchProductSchema) => {
+        console.log('Submitted Responsible:', responsible);
+
+        if (!responsible && !state) {
             return
         }
-        console.log(data);
+        if (responsible) {
+            setResponsible(responsible)
+        } else {
+            setResponsible('')
+        }
+
+        if (state && state !== 'all') {
+            setStateRaw(state)
+        } else {
+            setStateRaw(null)
+        }
+
+        setPage(1)
+    }
+
+    function handleResetFilters() {
+        reset()
+        setResponsible('')
+        setStateRaw(null)
+        setPage(1)
     }
 
     return (
         <main className="w-full flex flex-col gap-5 items-center p-6">
-            <h1 className="font-medium text-[25px]">Devolução</h1>
-            <div className="flex w-[90%] justify-between">
-                <form className="flex gap-3" onSubmit={handleSubmit(handleSearch)}>
-                <Input {...register("responsible")} placeholder="Procure por responsável..."/>
-                <SelectInput 
-                    control={control} 
-                    {...register('status')}  
-                    items={items} 
-                    width="w-[180px]" 
-                    placeholder="Categoria"
-                />
-                <Button type="submit" variant={"secondary"}><Search size={24}/></Button>
+            <h1 className="font-medium text-[25px]">Relatório</h1>
+            <div className="flex w-[95%] justify-between">
+                <form className="flex gap-3 items-center" onSubmit={handleSubmit(handleSearch)}>
+                    <Input {...register("responsible")} placeholder="Procure por responsável..." />
+                    <SelectInput
+                        control={control}
+                        {...register('state')}
+                        items={statesList}
+                        width="w-[180px]"
+                        placeholder="Categoria"
+                    />
+                    <Button type="submit" variant={"secondary"}><Search size={24} /></Button>
+                    {(responsible !== '' || state !== LOANSTATUSENUM.ALL) && (
+                        <Button onClick={handleResetFilters} size={'sm'} variant={'ghost'}>
+                            Limpar filtros
+                        </Button>
+                    )}
                 </form>
 
                 <Dialog>
                     <DialogTrigger asChild>
-                    <Button variant={"outline"}>Adicionar uma categoria</Button>
+                        <Button variant={"outline"}>Adicionar uma categoria</Button>
                     </DialogTrigger>
                     <CreateCategoryDialog />
-                </Dialog> 
+                </Dialog>
             </div>
             <div className="flex flex-col justify-center w-[95%]">
-                <Table>
+                <Table className="mb-5">
                     <TableHeader>
                         <TableRow>
                             <TableHead></TableHead>
@@ -98,44 +167,55 @@ export default function Relatory() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {loans.map((loan, index) => {
-                            const productNames = loans[index].products.map((product, i, arr) => {
+                        {displayedLoans?.map((loan, index) => {
+                            const productNames = displayedLoans[index].products.map((product, i, arr) => {
                                 if (i === arr.length - 1) {
-                                  return product.name; 
+                                    return product.product.name;
                                 }
-                                return product.name + ', ';
-                              }).join('');
+                                return product.product.name + ', ';
+                            }).join('');
 
-                              // Substitui a última vírgula por ' e '
-                              const finalProductsNames = productNames.replace(/,([^,]*)$/, ' e$1');
+                            // Substitui a última vírgula por ' e '
+                            const finalProductsNames = productNames.replace(/,([^,]*)$/, ' e$1');
 
                             return (
                                 <TableRow key={loan.id}>
                                     <TableCell>
                                         <Button variant={"ghost"} size={"icon"}>
-                                            <ScrollText/>
+                                            <ScrollText />
                                         </Button>
                                     </TableCell>
                                     <TableCell>{loan.responsible}</TableCell>
                                     <TableCell className="max-w-50 mr-1" key={loan.id}>
-                                        <span>{finalProductsNames}</span> 
+                                        <span>{finalProductsNames}</span>
                                     </TableCell>
                                     <TableCell>
-                                        {formatDistanceToNow(loan.date, {
+                                        {formatDistanceToNow(loan.created_at, {
                                             locale: ptBR,
                                             addSuffix: true,
                                         })}
                                     </TableCell>
                                     <TableCell>
-                                        <LoanStatus status={loan.status}/>
+                                        <LoanStatus status={loan.state} />
                                     </TableCell>
                                 </TableRow>
                             )
                         })}
-                        
+
                     </TableBody>
                 </Table>
+                <div className="flex justify-between">
+                    <span className="text-sm">
+                        {displayedMeta?.totalCount > 0
+                            ? displayedMeta?.totalCount
+                            : 'Carregando...'}{' '}
+                        {displayedMeta?.totalCount === 1 ? 'Item' : 'Items'}
+                    </span>
+                    <Pagination totalPages={displayedMeta?.totalPages} />
+                </div>
             </div>
-        </main>    
+        </main>
     )
 }
+
+

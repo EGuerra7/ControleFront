@@ -2,9 +2,9 @@ import { api } from '@/lib/axios'
 import { GetLoansResponse } from './get-loans'
 
 export interface SearchLoansQuery {
-  page: number | null
+  page?: number | null
   responsible?: string
-  state?: 'LOAN' | 'COMPLETED'
+  state?: 'LOAN' | 'COMPLETED' | 'all' | null
 }
 
 export async function searchLoans({
@@ -12,6 +12,10 @@ export async function searchLoans({
   responsible,
   state,
 }: SearchLoansQuery): Promise<GetLoansResponse> {
+  if (state === 'all') {
+    state = null
+  }
+
   const response = await api.get<GetLoansResponse>('/loans/search', {
     params: {
       page,
@@ -20,5 +24,5 @@ export async function searchLoans({
     },
   })
 
-  return { loans: response.data.loans }
+  return { loans: response.data.loans, meta: response.data.meta }
 }

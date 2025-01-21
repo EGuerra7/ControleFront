@@ -6,6 +6,8 @@ import SelectInput from './selectInput'
 import { Button } from './ui/button'
 import { Search } from 'lucide-react'
 import { parseAsInteger, useQueryState } from 'nuqs'
+import { useQuery } from '@tanstack/react-query'
+import { getCategories, GetCategoriesResponse } from '@/api/products/get-categories'
 
 const SearchProductsSchema = z.object({
   page: z.coerce.number(),
@@ -22,12 +24,17 @@ export default function SearchProducts() {
     defaultValue: '',
   })
 
-  const items = [
-    { name: 'Todas', value: 'all' },
-    { name: 'Papelaria', value: 'Stationery' },
-    { name: 'Eletrônicos', value: 'Eletronics' },
-    { name: 'Marcenaria', value: 'Marcenaria' },
-  ]
+  const { data: categoriesListData } = useQuery<GetCategoriesResponse>({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+  })
+
+  const categoriesList = categoriesListData?.categories || []
+
+  const categories = categoriesList.map(category => ({
+    name: category.name,
+    value: category.name,
+  }))
 
   const { register, handleSubmit, control, reset } =
     useForm<searchProductSchema>({
@@ -75,7 +82,7 @@ export default function SearchProducts() {
       <SelectInput
         control={control}
         {...register('category')}
-        items={items}
+        items={categories}
         width="w-[180px]"
         placeholder="Categoria"
       />

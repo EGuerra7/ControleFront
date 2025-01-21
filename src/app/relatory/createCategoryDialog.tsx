@@ -1,3 +1,4 @@
+import { createCategory } from '@/api/products/create-category'
 import { Button } from '@/components/ui/button'
 import {
   DialogClose,
@@ -18,12 +19,17 @@ const CreateCategoryBodySchema = z.object({
 
 type createCategorySchema = z.infer<typeof CreateCategoryBodySchema>
 export default function CreateCategoryDialog() {
-  const { register, handleSubmit } = useForm<createCategorySchema>({
+  const { register, handleSubmit, reset } = useForm<createCategorySchema>({
     resolver: zodResolver(CreateCategoryBodySchema),
   })
 
-  const handleCreateCategory = (data: createCategorySchema) => {
-    console.log(data)
+  async function handleCreateCategory(data: createCategorySchema) {
+    await createCategory({
+      name: data.name
+    })
+
+    alert('Categoria criada')
+    reset()
   }
 
   return (

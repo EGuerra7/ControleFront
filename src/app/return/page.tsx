@@ -1,6 +1,7 @@
 'use client'
 
-import { getLoans, GetLoansResponse } from '@/api/loans/get-loans'
+import { GetLoansResponse } from '@/api/loans/get-loans'
+import { getLoansByState } from '@/api/loans/get-loans-by-state'
 import { searchLoans } from '@/api/loans/search-loans'
 import ReturnDialog from '@/app/return/returnDialog'
 import { Button } from '@/components/ui/button'
@@ -16,29 +17,26 @@ export default function Return() {
   const [responsible, setResponsible] = useQueryState('responsible', {
     defaultValue: '',
   })
-
+  const state = 'LOAN'
   const debouncedResponsible = useDebounce(responsible, 400)
 
-  const [pageIndex] = useQueryState('page', parseAsInteger.withDefault(1))
 
-  const page = z.coerce.number().parse(pageIndex)
 
   const { data: loansData } = useQuery<GetLoansResponse>({
-    queryKey: ['loans', page],
+    queryKey: ['loansReturn', state],
     queryFn: () =>
-      getLoans({
-        page,
+      getLoansByState({
+        state,
       }),
   })
 
   const { data: searchedLoansData } = useQuery<GetLoansResponse | undefined>({
-    queryKey: ['loans', page, debouncedResponsible],
+    queryKey: ['loansReturn', debouncedResponsible, state],
     queryFn: () =>
       responsible
         ? searchLoans({
-            page,
-            responsible: debouncedResponsible,
-          })
+          responsible: debouncedResponsible,
+        })
         : undefined,
     enabled: !!debouncedResponsible,
   })
@@ -70,7 +68,7 @@ export default function Return() {
           const finalProductsNames = productNames.replace(/,([^,]*)$/, ' e$1')
 
           return (
-            <Card key={loan.id} className="pt-4">
+            <Card key={loan.id} className="pt-4 flex flex-col justify-between">
               <CardContent className="flex flex-col gap-2 text-left">
                 <span className="text-base">
                   <b className="font-medium">Responsável: </b>
@@ -85,7 +83,7 @@ export default function Return() {
                   <DialogTrigger asChild>
                     <Button variant={'green'}>Devolver</Button>
                   </DialogTrigger>
-                  <ReturnDialog />
+                  <ReturnDialog loan={loan} />
                 </Dialog>
               </CardFooter>
             </Card>
