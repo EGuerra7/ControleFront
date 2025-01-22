@@ -76,7 +76,7 @@ export default function SelectCombobox({
                         setOpen(false)
                       }}
                     >
-                      {item.name}
+                      {item.name} ({item.quantity})
                       <Check
                         className={cn(
                           'ml-auto',

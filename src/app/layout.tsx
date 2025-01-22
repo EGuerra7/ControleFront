@@ -4,6 +4,7 @@ import './globals.css'
 import Aside from '@/components/aside'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import QueryClientProviderWrapper from '@/lib/query-client-provider'
+import { AdminProvider } from '@/hooks/adminContext'
 
 const baloo = Baloo_2({
   variable: '--font-baloo-2',
@@ -25,12 +26,16 @@ export default function RootLayout({
       <body
         className={`inline-flex w-full min-h-full gap-6 ${baloo} antialiased`}
       >
-        <Aside />
-        <div className="flex ml-[90px] justify-center w-full min-h-screen">
-          <NuqsAdapter>
-            <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
-          </NuqsAdapter>
-        </div>
+        <AdminProvider>
+          <Aside />
+          <div className="flex ml-[90px] justify-center w-full min-h-screen">
+            <NuqsAdapter>
+              <QueryClientProviderWrapper>
+                {children}
+              </QueryClientProviderWrapper>
+            </NuqsAdapter>
+          </div>
+        </AdminProvider>
       </body>
     </html>
   )

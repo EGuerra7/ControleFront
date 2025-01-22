@@ -10,8 +10,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useQuery } from '@tanstack/react-query'
-import { parseAsInteger, useQueryState } from 'nuqs'
-import { z } from 'zod'
+import { useQueryState } from 'nuqs'
 
 export default function Return() {
   const [responsible, setResponsible] = useQueryState('responsible', {
@@ -19,8 +18,6 @@ export default function Return() {
   })
   const state = 'LOAN'
   const debouncedResponsible = useDebounce(responsible, 400)
-
-
 
   const { data: loansData } = useQuery<GetLoansResponse>({
     queryKey: ['loansReturn', state],
@@ -35,8 +32,8 @@ export default function Return() {
     queryFn: () =>
       responsible
         ? searchLoans({
-          responsible: debouncedResponsible,
-        })
+            responsible: debouncedResponsible,
+          })
         : undefined,
     enabled: !!debouncedResponsible,
   })

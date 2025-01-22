@@ -23,8 +23,8 @@ export interface Loan {
 export interface GetLoansResponse {
   loans: Loan[]
   meta: {
-    totalCount: number,
-    totalPages: number,
+    totalCount: number
+    totalPages: number
   }
 }
 
