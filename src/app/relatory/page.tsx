@@ -18,6 +18,9 @@ import { parseAsInteger, useQueryState } from "nuqs";
 import { useQuery } from "@tanstack/react-query";
 import Pagination from "@/components/pagination";
 import { searchLoans } from "@/api/loans/search-loans";
+import LoanDetails from "./loan-datails";
+import { useState } from "react";
+import RelatoryTableRow from "./relatoryTableRow";
 
 const SearchProductsSchema = z.object({
     page: z.coerce.number(),
@@ -167,39 +170,8 @@ export default function Relatory() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {displayedLoans?.map((loan, index) => {
-                            const productNames = displayedLoans[index].products.map((product, i, arr) => {
-                                if (i === arr.length - 1) {
-                                    return product.product.name;
-                                }
-                                return product.product.name + ', ';
-                            }).join('');
-
-                            // Substitui a última vírgula por ' e '
-                            const finalProductsNames = productNames.replace(/,([^,]*)$/, ' e$1');
-
-                            return (
-                                <TableRow key={loan.id}>
-                                    <TableCell>
-                                        <Button variant={"ghost"} size={"icon"}>
-                                            <ScrollText />
-                                        </Button>
-                                    </TableCell>
-                                    <TableCell>{loan.responsible}</TableCell>
-                                    <TableCell className="max-w-50 mr-1" key={loan.id}>
-                                        <span>{finalProductsNames}</span>
-                                    </TableCell>
-                                    <TableCell>
-                                        {formatDistanceToNow(loan.created_at, {
-                                            locale: ptBR,
-                                            addSuffix: true,
-                                        })}
-                                    </TableCell>
-                                    <TableCell>
-                                        <LoanStatus status={loan.state} />
-                                    </TableCell>
-                                </TableRow>
-                            )
+                        {displayedLoans?.map(loan => {
+                            return ( <RelatoryTableRow key={loan.id} loan={loan} /> )
                         })}
 
                     </TableBody>

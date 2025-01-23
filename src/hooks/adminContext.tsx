@@ -1,5 +1,6 @@
 'use client'
 
+import { ToastProvider } from '@radix-ui/react-toast'
 import {
   createContext,
   ReactNode,
@@ -32,7 +33,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   return (
     <AdminContext.Provider value={{ admin, setAdmin }}>
-      {children}
+      <ToastProvider>{children}</ToastProvider>
     </AdminContext.Provider>
   )
 }

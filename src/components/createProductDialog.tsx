@@ -20,7 +20,11 @@ import { Products } from '@/api/products/get-products'
 import { useEffect, useState } from 'react'
 import { editProduct } from '@/api/products/edit-product'
 import { createProduct } from '@/api/products/create-product'
-import { getCategories, GetCategoriesResponse } from '@/api/products/get-categories'
+import {
+  getCategories,
+  GetCategoriesResponse,
+} from '@/api/products/get-categories'
+import { useToast } from '@/hooks/use-toast'
 
 const CreateProductBodySchema = z.object({
   id: z.string().uuid().optional(),
@@ -39,6 +43,8 @@ interface CreateProductDialogProps {
 export default function CreateProductDialog({
   product,
 }: CreateProductDialogProps) {
+  const { toast } = useToast()
+
   const [isEditMode, setIsEditMode] = useState(false)
 
   const { register, handleSubmit, control, reset } =
@@ -64,7 +70,7 @@ export default function CreateProductDialog({
 
   const categoriesList = categoriesListData?.categories || []
 
-  const categories = categoriesList.map(category => ({
+  const categories = categoriesList.map((category) => ({
     name: category.name,
     value: category.name,
   }))
@@ -101,16 +107,33 @@ export default function CreateProductDialog({
 
             return oldProducts.map((p) => (p.id === product.id ? product : p))
           })
-          alert('Produto editado com sucesso!')
+          toast({
+            title: 'Sucesso!',
+            description: `Produto ${product.name} editado com sucesso!`,
+            variant: 'green',
+            duration: 3000,
+          })
         } else {
           queryClient.setQueryData<Products[]>(['products'], (oldProducts) => {
             return oldProducts ? [...oldProducts, product] : [product]
           })
-          alert('Produto criado com sucesso!')
+          toast({
+            title: 'Sucesso!',
+            description: `Produto ${product.name} criado com sucesso!`,
+            variant: 'green',
+            duration: 3000,
+          })
         }
       },
       onError: (error) => {
-        console.error('Erro ao criar o produto:', error.message)
+        console.log(error.message)
+
+        toast({
+          title: 'Erro!',
+          description: 'Erro ao criar ou editar o produto!',
+          variant: 'destructive',
+          duration: 3000,
+        })
       },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ['products'] })

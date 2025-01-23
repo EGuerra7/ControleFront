@@ -1,7 +1,9 @@
 'use client'
 
-import { GetLoansResponse } from '@/api/loans/get-loans'
-import { getLoansByState } from '@/api/loans/get-loans-by-state'
+import {
+  getLoansByState,
+  GetLoansByStateResponse,
+} from '@/api/loans/get-loans-by-state'
 import { searchLoans } from '@/api/loans/search-loans'
 import ReturnDialog from '@/app/return/returnDialog'
 import { Button } from '@/components/ui/button'
@@ -19,7 +21,7 @@ export default function Return() {
   const state = 'LOAN'
   const debouncedResponsible = useDebounce(responsible, 400)
 
-  const { data: loansData } = useQuery<GetLoansResponse>({
+  const { data: loansData } = useQuery<GetLoansByStateResponse>({
     queryKey: ['loansReturn', state],
     queryFn: () =>
       getLoansByState({
@@ -27,7 +29,9 @@ export default function Return() {
       }),
   })
 
-  const { data: searchedLoansData } = useQuery<GetLoansResponse | undefined>({
+  const { data: searchedLoansData } = useQuery<
+    GetLoansByStateResponse | undefined
+  >({
     queryKey: ['loansReturn', debouncedResponsible, state],
     queryFn: () =>
       responsible

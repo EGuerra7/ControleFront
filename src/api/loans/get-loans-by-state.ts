@@ -1,17 +1,20 @@
 import { api } from '@/lib/axios'
-import { GetLoansResponse } from './get-loans'
+import { Loan } from './get-loans'
 
 export interface GetLoansByStateQuery {
   state?: 'LOAN' | 'COMPLETED'
 }
 
+export interface GetLoansByStateResponse {
+  loans: Loan[]
+}
 
 export async function getLoansByState({
-  state
-}: GetLoansByStateQuery): Promise<GetLoansResponse> {
-  const response = await api.get<GetLoansResponse>('/loans/state', {
+  state,
+}: GetLoansByStateQuery): Promise<GetLoansByStateResponse> {
+  const response = await api.get<GetLoansByStateResponse>('/loans/state', {
     params: {
-      state
+      state,
     },
   })
 

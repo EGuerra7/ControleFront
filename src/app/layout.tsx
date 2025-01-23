@@ -5,6 +5,7 @@ import Aside from '@/components/aside'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import QueryClientProviderWrapper from '@/lib/query-client-provider'
 import { AdminProvider } from '@/hooks/adminContext'
+import { Toaster } from '@/components/ui/toaster'
 
 const baloo = Baloo_2({
   variable: '--font-baloo-2',
@@ -36,6 +37,7 @@ export default function RootLayout({
             </NuqsAdapter>
           </div>
         </AdminProvider>
+        <Toaster />
       </body>
     </html>
   )

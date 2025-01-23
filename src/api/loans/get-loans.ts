@@ -15,7 +15,7 @@ export interface Loan {
     product_id: string
     loan_id: string
     loan_quantity: number
-    return_quantitty: number
+    return_quantity: number
     product: Products
   }[]
 }

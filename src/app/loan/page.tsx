@@ -33,7 +33,7 @@ export default function Loan() {
       resolver: zodResolver(CreateLoanFormSchema),
       defaultValues: {
         responsible: '',
-        products: [{ id: '', loan_quantity: 1, return_quantity: 1 }],
+        products: [{ id: '', loan_quantity: 0, return_quantity: 0 }],
       },
     })
 
