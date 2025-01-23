@@ -18,6 +18,9 @@ const baloo = Baloo_2({
 export const metadata: Metadata = {
   title: 'Controle Almoxarifado',
   description: 'App created for stock control',
+  icons: {
+    icon: '/logoFund.svg'
+  }
 }
 
 export default function RootLayout({
