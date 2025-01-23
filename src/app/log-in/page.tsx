@@ -11,15 +11,15 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 const LogInBodySchema = z.object({
-  user: z.string(),
-  password: z.string().min(3),
+  user: z.string().nonempty('O campo usuário é obrigatório.'),
+  password: z.string().min(3, 'A senha deve ter pelo menos 3 caracteres.'),
 })
 
 export type logInBodySchema = z.infer<typeof LogInBodySchema>
 export default function LogIn() {
   const { toast } = useToast()
 
-  const { register, handleSubmit, reset } = useForm<logInBodySchema>({
+  const { register, handleSubmit, formState: { errors, isSubmitted }, } = useForm<logInBodySchema>({
     resolver: zodResolver(LogInBodySchema),
   })
 
@@ -43,16 +43,24 @@ export default function LogIn() {
         variant: 'green',
         duration: 3000,
       })
-    } catch {
-      toast({
-        title: 'Error',
-        description: 'Usuário ou senha inválidos.',
-        variant: 'destructive',
-        duration: 3000,
-      })
-    }
+    } catch (error: any) {
 
-    reset()
+      if (error.response && error.response.data && error.response.data.error) {
+        toast({
+          title: 'Error',
+          description: `${error.response.data.message}`,
+          variant: 'destructive',
+          duration: 3000,
+        })
+      } else {
+        toast({
+          title: 'Erro',
+          description: 'Erro inesperado ao realizar o log-in.',
+          variant: 'destructive',
+          duration: 3000,
+        })
+      }
+    }
   }
 
   function handleLogout() {
@@ -92,6 +100,14 @@ export default function LogIn() {
               <Button type="submit" className="w-full mt-4">
                 Entrar
               </Button>
+
+              {isSubmitted && (
+                <div className='flex flex-col items-center'>
+                  {errors.user && <span className='text-sm text-red-500'>{errors.user.message}</span>}
+                  {errors.password && <span className='text-sm text-red-500'>{errors.password.message}</span>}
+                </div>
+              )}
+
             </form>
           </>
         )}

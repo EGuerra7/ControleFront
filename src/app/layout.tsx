@@ -1,11 +1,14 @@
 import type { Metadata } from 'next'
 import { Baloo_2 } from 'next/font/google'
 import './globals.css'
-import Aside from '@/components/aside'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import QueryClientProviderWrapper from '@/lib/query-client-provider'
 import { AdminProvider } from '@/hooks/adminContext'
 import { Toaster } from '@/components/ui/toaster'
+import { Aside } from '@/components/aside'
+
+
+
 
 const baloo = Baloo_2({
   variable: '--font-baloo-2',
@@ -22,6 +25,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+
+
   return (
     <html lang="en">
       <body

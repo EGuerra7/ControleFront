@@ -10,9 +10,13 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useAdmin } from '@/hooks/adminContext'
+import { usePathname } from 'next/navigation'
 
-export default function Aside() {
+
+
+export function Aside() {
   const { admin } = useAdmin()
+  const pathname = usePathname()
 
   return (
     <aside className="fixed top-0 left-0 flex justify-between flex-col w-100 bg-gray-100 h-screen px-4 py-6 border-r border-slate-500">
@@ -25,21 +29,21 @@ export default function Aside() {
             <Package
               size={40}
               absoluteStrokeWidth
-              className=" text-zinc-500 transition-colors hover:text-gray-300"
+              className={pathname === '/' ? "text-gray-300" : 'text-zinc-500 transition-colors hover:text-gray-300'}
             />
           </Link>
-          <Link href={'loan'}>
+          <Link href={'/loan'}>
             <CornerDownRight
               size={40}
               absoluteStrokeWidth
-              className=" text-zinc-500 transition-colors hover:text-gray-300"
+              className={pathname === '/loan' ? "text-gray-300" : 'text-zinc-500 transition-colors hover:text-gray-300'}
             />
           </Link>
           <Link href={'/return'}>
             <CornerDownLeft
               size={40}
               absoluteStrokeWidth
-              className=" text-zinc-500 transition-colors hover:text-gray-300"
+              className={pathname === '/return' ? "text-gray-300" : 'text-zinc-500 transition-colors hover:text-gray-300'}
             />
           </Link>
         </nav>
@@ -50,7 +54,7 @@ export default function Aside() {
             <ReceiptText
               size={40}
               absoluteStrokeWidth
-              className=" text-zinc-500 transition-colors hover:text-gray-300"
+              className={pathname === '/relatory' ? "text-gray-300" : 'text-zinc-500 transition-colors hover:text-gray-300'}
             />
           </Link>
         )}

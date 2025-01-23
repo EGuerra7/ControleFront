@@ -10,6 +10,7 @@ import { GetLoansResponse, Loan } from "@/api/loans/get-loans";
 import { returnLoan } from "@/api/loans/return-loans";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/query-client-provider";
+import { useToast } from "@/hooks/use-toast";
 
 interface ReturnDialogProps {
     loan: Loan
@@ -30,7 +31,7 @@ const ReturnProductsBodySchema = z.object({
 type returnProductsSchema = z.infer<typeof ReturnProductsBodySchema>
 
 export default function ReturnDialog({ loan }: ReturnDialogProps) {
-
+    const { toast } = useToast()
     const { register, handleSubmit, control } = useForm<returnProductsSchema>({
         resolver: zodResolver(ReturnProductsBodySchema),
         defaultValues: {
@@ -79,16 +80,25 @@ export default function ReturnDialog({ loan }: ReturnDialogProps) {
             })
         })
     }
-
-    async function returnLoanAPI(data: returnProductsSchema) {
-
-    }
-
     const { mutateAsync: dispatchReturnLoan } = useMutation({
         mutationFn: returnLoan,
         async onSuccess(_, { loanId }) {
-            alert('Retorno feito com sucesso!')
             updateLoanStateToCompleted(loanId)
+
+            toast({
+                title: 'Sucesso',
+                description: `Retorno feito com sucesso!`,
+                variant: 'green',
+                duration: 3000,
+            })
+        },
+        onError: (error: any) => {
+            toast({
+                title: 'Error',
+                description: `${error.response.data.message}` || 'Erro inesperado',
+                variant: 'destructive',
+                duration: 3000,
+            })
         }
     })
 

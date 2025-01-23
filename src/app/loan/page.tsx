@@ -13,12 +13,14 @@ import {
   GetAllProductResponse,
 } from '@/api/products/get-all-products'
 import { createLoan } from '@/api/loans/create-loan'
+import { useToast } from '@/hooks/use-toast'
+import { useEffect, useState } from 'react'
 
 const CreateLoanFormSchema = z.object({
   responsible: z.string().min(3),
   products: z.array(
     z.object({
-      id: z.string(),
+      id: z.string().uuid('Empréstimo inválido, sem produtos!'),
       loan_quantity: z.number(),
       return_quantity: z.number().default(1),
     }),
@@ -28,7 +30,11 @@ const CreateLoanFormSchema = z.object({
 export type createLoanFormSchema = z.infer<typeof CreateLoanFormSchema>
 
 export default function Loan() {
-  const { control, register, handleSubmit, reset } =
+  const [showError, setShowError] = useState(false)
+  const [animationClass, setAnimationClass] = useState('animate-fade-in');
+  const { toast } = useToast()
+
+  const { control, register, handleSubmit, reset, formState: { errors }, } =
     useForm<createLoanFormSchema>({
       resolver: zodResolver(CreateLoanFormSchema),
       defaultValues: {
@@ -37,8 +43,25 @@ export default function Loan() {
       },
     })
 
+  useEffect(() => {
+    if (errors.products) {
+      setShowError(true)
+      setAnimationClass('animate-fade-in')
+
+      const timer = setTimeout(() => {
+        setAnimationClass('animate-fade-out');
+
+        setTimeout(() => {
+          setShowError(false)
+        }, 400)
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [errors.products])
+
   function handleAddProduct() {
-    append({ id: '', loan_quantity: 1, return_quantity: 1 })
+    append({ id: '', loan_quantity: 0, return_quantity: 0 })
   }
 
   function handleRemoveProduct(index: number) {
@@ -51,13 +74,37 @@ export default function Loan() {
   })
 
   async function handleCreateLoan(loan: createLoanFormSchema) {
-    await createLoan({
-      responsible: loan.responsible,
-      products: loan.products,
-    })
+    try {
+      await createLoan({
+        responsible: loan.responsible,
+        products: loan.products,
+      })
 
-    alert('Empréstimo criado')
-    reset()
+      toast({
+        title: 'Sucesso',
+        description: `Seu empréstimo foi registrado em nome de ${loan.responsible}!`,
+        variant: 'green',
+        duration: 3000,
+      })
+      reset()
+    } catch (error: any) {
+
+      if (error.response && error.response.data && error.response.data.error) {
+        toast({
+          title: 'Erro',
+          description: `${error.response.data.message}`,
+          variant: 'destructive',
+          duration: 3000,
+        })
+      } else {
+        toast({
+          title: 'Erro',
+          description: 'Erro inesperado ao realizar o empréstimo.',
+          variant: 'destructive',
+          duration: 3000,
+        })
+      }
+    }
   }
 
   const { data: productsList } = useQuery<GetAllProductResponse>({
@@ -75,7 +122,12 @@ export default function Loan() {
             onSubmit={handleSubmit(handleCreateLoan)}
           >
             <div className="flex flex-col gap-5">
-              <Input {...register('responsible')} placeholder="Responsável" />
+              <div>
+                {(errors.responsible) && (
+                  <span className='text-sm text-red-500 line'>O campo de responsável é obrigátorio!</span>
+                )}
+                <Input {...register('responsible')} placeholder="Responsável" />
+              </div>
               <div className="flex flex-col gap-3">
                 {fields.map((field, index) => {
                   return (
@@ -123,6 +175,13 @@ export default function Loan() {
           </form>
         </div>
       </div>
+
+      {showError && (
+        <div className={`absolute right-5 bottom-5 border py-6 pl-4 pr-8 rounded-lg bg-red-500 text-white ${animationClass}`}>
+          <span>Empréstimo inválido, sem produtos!</span>
+        </div>
+      )}
+
     </>
   )
 }
