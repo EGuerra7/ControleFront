@@ -31,9 +31,8 @@ const SearchProductsSchema = z.object({
 export enum LOANSTATUSENUM {
     LOAN = "LOAN",
     COMPLETED = "COMPLETED",
-    ALL = 'all'
+    ALL = 'all',
 }
-
 
 type searchProductSchema = z.infer<typeof SearchProductsSchema>
 export default function Relatory() {
