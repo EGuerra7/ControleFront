@@ -17,7 +17,7 @@ export function Aside() {
   const pathname = usePathname()
 
   return (
-    <aside className="fixed top-0 left-0 flex justify-between flex-col w-100 bg-gray-100 h-screen px-4 py-6 border-r border-slate-500">
+    <aside className="fixed top-0 left-0 flex justify-between flex-col w-100 bg-gray-100 h-screen px-4 py-10 border-r border-slate-500">
       <div className="flex flex-col items-center gap-16">
         <Link href={'/log-in'}>
           <Image src={Logo} alt="Logo da Fundação" width={50} height={60} />
