@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { useToast } from '@/hooks/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -22,13 +23,19 @@ export default function CreateCategoryDialog() {
   const { register, handleSubmit, reset } = useForm<createCategorySchema>({
     resolver: zodResolver(CreateCategoryBodySchema),
   })
+  const { toast } = useToast()
 
   async function handleCreateCategory(data: createCategorySchema) {
     await createCategory({
       name: data.name,
     })
 
-    alert('Categoria criada')
+    toast({
+      title: 'Sucesso',
+      description: `Categoria criada!`,
+      variant: 'green',
+      duration: 3000,
+    })
     reset()
   }
 

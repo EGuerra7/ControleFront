@@ -125,16 +125,6 @@ export default function CreateProductDialog({
           })
         }
       },
-      onError: (error) => {
-        console.log(error.message)
-
-        toast({
-          title: 'Erro!',
-          description: 'Erro ao criar ou editar o produto!',
-          variant: 'destructive',
-          duration: 3000,
-        })
-      },
       onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ['products'] })
       },
