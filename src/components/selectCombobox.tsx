@@ -49,7 +49,7 @@ export default function SelectCombobox({
               variant={'outline'}
               role="combobox"
               aria-expanded={open}
-              className="min-w-[200px] justify-between text-gray-600 font-normal"
+              className="min-w-[200px] p-1 justify-between text-gray-600 font-normal"
             >
               {field.value
                 ? items.find((item) => item.id === field.value)?.name

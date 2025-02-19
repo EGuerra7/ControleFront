@@ -109,7 +109,7 @@ export default function CreateProductDialog({
           })
           toast({
             title: 'Sucesso!',
-            description: `Produto ${product.name} editado com sucesso!`,
+            description: `Produto editado com sucesso!`,
             variant: 'green',
             duration: 3000,
           })
@@ -119,7 +119,7 @@ export default function CreateProductDialog({
           })
           toast({
             title: 'Sucesso!',
-            description: `Produto ${product.name} criado com sucesso!`,
+            description: `Produto criado com sucesso!`,
             variant: 'green',
             duration: 3000,
           })
