@@ -6,6 +6,7 @@ import QueryClientProviderWrapper from '@/lib/query-client-provider'
 import { AdminProvider } from '@/hooks/adminContext'
 import { Toaster } from '@/components/ui/toaster'
 import { Aside } from '@/components/aside'
+import { Suspense } from 'react'
 
 const baloo = Baloo_2({
   variable: '--font-baloo-2',
@@ -30,17 +31,19 @@ export default function RootLayout({
       <body
         className={`inline-flex w-full min-h-full gap-6 ${baloo} antialiased`}
       >
-        <AdminProvider>
-          <Aside />
-          <div className="flex ml-[90px] justify-center w-full min-h-screen">
-            <NuqsAdapter>
-              <QueryClientProviderWrapper>
-                {children}
-              </QueryClientProviderWrapper>
-            </NuqsAdapter>
-          </div>
-        </AdminProvider>
-        <Toaster />
+        <Suspense fallback={<div>Loading...</div>}>
+          <AdminProvider>
+            <Aside />
+            <div className="flex ml-[90px] justify-center w-full min-h-screen">
+              <NuqsAdapter>
+                <QueryClientProviderWrapper>
+                  {children}
+                </QueryClientProviderWrapper>
+              </NuqsAdapter>
+            </div>
+          </AdminProvider>
+          <Toaster />
+        </Suspense>
       </body>
     </html>
   )
