@@ -22,7 +22,7 @@ export function Aside() {
         <Link href={'/log-in'}>
           <Image src={Logo} alt="Logo da Fundação" width={50} height={60} />
         </Link>
-        <nav className="flex flex-col gap-3">
+        <nav className="flex flex-col gap-5 lg:gap-3">
           <Link href={'/'}>
             <Package
               size={40}
