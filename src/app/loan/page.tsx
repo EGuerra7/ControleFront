@@ -31,17 +31,22 @@ export type createLoanFormSchema = z.infer<typeof CreateLoanFormSchema>
 
 export default function Loan() {
   const [showError, setShowError] = useState(false)
-  const [animationClass, setAnimationClass] = useState('animate-fade-in');
+  const [animationClass, setAnimationClass] = useState('animate-fade-in')
   const { toast } = useToast()
 
-  const { control, register, handleSubmit, reset, formState: { errors }, } =
-    useForm<createLoanFormSchema>({
-      resolver: zodResolver(CreateLoanFormSchema),
-      defaultValues: {
-        responsible: '',
-        products: [{ id: '', loan_quantity: 0, return_quantity: 0 }],
-      },
-    })
+  const {
+    control,
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<createLoanFormSchema>({
+    resolver: zodResolver(CreateLoanFormSchema),
+    defaultValues: {
+      responsible: '',
+      products: [{ id: '', loan_quantity: 0, return_quantity: 0 }],
+    },
+  })
 
   useEffect(() => {
     if (errors.products) {
@@ -49,14 +54,14 @@ export default function Loan() {
       setAnimationClass('animate-fade-in')
 
       const timer = setTimeout(() => {
-        setAnimationClass('animate-fade-out');
+        setAnimationClass('animate-fade-out')
 
         setTimeout(() => {
           setShowError(false)
         }, 400)
-      }, 3000);
+      }, 3000)
 
-      return () => clearTimeout(timer);
+      return () => clearTimeout(timer)
     }
   }, [errors.products])
 
@@ -88,7 +93,6 @@ export default function Loan() {
       })
       reset()
     } catch (error: any) {
-
       if (error.response && error.response.data && error.response.data.error) {
         toast({
           title: 'Erro',
@@ -123,8 +127,10 @@ export default function Loan() {
           >
             <div className="flex flex-col gap-5">
               <div>
-                {(errors.responsible) && (
-                  <span className='text-sm text-red-500 line'>O campo de responsável é obrigátorio!</span>
+                {errors.responsible && (
+                  <span className="text-sm text-red-500 line">
+                    O campo de responsável é obrigátorio!
+                  </span>
                 )}
                 <Input {...register('responsible')} placeholder="Responsável" />
               </div>
@@ -177,11 +183,12 @@ export default function Loan() {
       </div>
 
       {showError && (
-        <div className={`absolute right-5 bottom-5 border py-6 pl-4 pr-8 rounded-lg bg-red-500 text-white ${animationClass}`}>
+        <div
+          className={`absolute right-5 bottom-5 border py-6 pl-4 pr-8 rounded-lg bg-red-500 text-white ${animationClass}`}
+        >
           <span>Empréstimo inválido, sem produtos!</span>
         </div>
       )}
-
     </>
   )
 }

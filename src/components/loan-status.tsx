@@ -1,4 +1,4 @@
-import { LOANSTATUSENUM } from '@/app/relatory/page'
+import { LOANSTATUSENUM } from '@/enum/loanStatusEnum'
 
 export type LoanStatusType = 'LOAN' | 'COMPLETED'
 

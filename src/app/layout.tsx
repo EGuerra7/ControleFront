@@ -7,9 +7,6 @@ import { AdminProvider } from '@/hooks/adminContext'
 import { Toaster } from '@/components/ui/toaster'
 import { Aside } from '@/components/aside'
 
-
-
-
 const baloo = Baloo_2({
   variable: '--font-baloo-2',
   subsets: ['latin'],
@@ -19,8 +16,8 @@ export const metadata: Metadata = {
   title: 'Controle Almoxarifado',
   description: 'App created for stock control',
   icons: {
-    icon: '/logoFund.svg'
-  }
+    icon: '/logoFund.svg',
+  },
 }
 
 export default function RootLayout({
@@ -28,8 +25,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-
-
   return (
     <html lang="en">
       <body

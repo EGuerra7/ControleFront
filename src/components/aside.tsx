@@ -12,8 +12,6 @@ import Link from 'next/link'
 import { useAdmin } from '@/hooks/adminContext'
 import { usePathname } from 'next/navigation'
 
-
-
 export function Aside() {
   const { admin } = useAdmin()
   const pathname = usePathname()
@@ -29,21 +27,33 @@ export function Aside() {
             <Package
               size={40}
               absoluteStrokeWidth
-              className={pathname === '/' ? "text-gray-300" : 'text-zinc-500 transition-colors hover:text-gray-300'}
+              className={
+                pathname === '/'
+                  ? 'text-gray-300'
+                  : 'text-zinc-500 transition-colors hover:text-gray-300'
+              }
             />
           </Link>
           <Link href={'/loan'}>
             <CornerDownRight
               size={40}
               absoluteStrokeWidth
-              className={pathname === '/loan' ? "text-gray-300" : 'text-zinc-500 transition-colors hover:text-gray-300'}
+              className={
+                pathname === '/loan'
+                  ? 'text-gray-300'
+                  : 'text-zinc-500 transition-colors hover:text-gray-300'
+              }
             />
           </Link>
           <Link href={'/return'}>
             <CornerDownLeft
               size={40}
               absoluteStrokeWidth
-              className={pathname === '/return' ? "text-gray-300" : 'text-zinc-500 transition-colors hover:text-gray-300'}
+              className={
+                pathname === '/return'
+                  ? 'text-gray-300'
+                  : 'text-zinc-500 transition-colors hover:text-gray-300'
+              }
             />
           </Link>
         </nav>
@@ -54,7 +64,11 @@ export function Aside() {
             <ReceiptText
               size={40}
               absoluteStrokeWidth
-              className={pathname === '/relatory' ? "text-gray-300" : 'text-zinc-500 transition-colors hover:text-gray-300'}
+              className={
+                pathname === '/relatory'
+                  ? 'text-gray-300'
+                  : 'text-zinc-500 transition-colors hover:text-gray-300'
+              }
             />
           </Link>
         )}

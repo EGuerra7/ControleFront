@@ -7,7 +7,10 @@ import { Button } from './ui/button'
 import { Search } from 'lucide-react'
 import { parseAsInteger, useQueryState } from 'nuqs'
 import { useQuery } from '@tanstack/react-query'
-import { getCategories, GetCategoriesResponse } from '@/api/products/get-categories'
+import {
+  getCategories,
+  GetCategoriesResponse,
+} from '@/api/products/get-categories'
 
 const SearchProductsSchema = z.object({
   page: z.coerce.number(),
@@ -31,7 +34,7 @@ export default function SearchProducts() {
 
   const categoriesList = categoriesListData?.categories || []
 
-  const categories = categoriesList.map(category => ({
+  const categories = categoriesList.map((category) => ({
     name: category.name,
     value: category.name,
   }))

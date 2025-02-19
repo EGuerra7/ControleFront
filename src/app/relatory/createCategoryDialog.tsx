@@ -25,7 +25,7 @@ export default function CreateCategoryDialog() {
 
   async function handleCreateCategory(data: createCategorySchema) {
     await createCategory({
-      name: data.name
+      name: data.name,
     })
 
     alert('Categoria criada')
