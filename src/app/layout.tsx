@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`inline-flex w-full min-h-full gap-6 ${baloo} antialiased`}
+        className={`inline-flex w-full min-h-screen gap-6 ${baloo} antialiased`}
       >
         <Suspense fallback={<div>Loading...</div>}>
           <AdminProvider>
