@@ -58,7 +58,7 @@ export function Aside() {
           </Link>
         </nav>
       </div>
-      <footer className="pb-[1px]">
+      <footer className="mb-5 sm:mb-0">
         {admin && (
           <Link href={'/relatory'}>
             <ReceiptText
