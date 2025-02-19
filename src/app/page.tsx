@@ -20,6 +20,7 @@ import { getProduct, GetProductResponse } from '@/api/products/get-products'
 import { z } from 'zod'
 import { getSearchedProducts } from '@/api/products/get-searched-products'
 import { useAdmin } from '@/hooks/adminContext'
+import { Suspense } from 'react'
 
 export default function Home() {
   const { admin } = useAdmin()
@@ -63,68 +64,72 @@ export default function Home() {
   const displayedMeta = searchedMeta ?? productsMeta
 
   return (
-    <div className="relative flex flex-col gap-6 items-center w-full flex-1 p-6">
-      <h1 className="text-[25px] font-medium">Estoque</h1>
-      <div className="flex w-[95%] justify-between">
-        <div>
-          <SearchProducts />
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="relative flex flex-col gap-6 items-center w-full flex-1 p-6">
+        <h1 className="text-[25px] font-medium">Estoque</h1>
+        <div className="flex w-[95%] justify-between">
+          <div>
+            <SearchProducts />
+          </div>
+          {admin && (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant={'outline'}>Adicionar um produto</Button>
+              </DialogTrigger>
+              <CreateProductDialog />
+            </Dialog>
+          )}
         </div>
-        {admin && (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant={'outline'}>Adicionar um produto</Button>
-            </DialogTrigger>
-            <CreateProductDialog />
-          </Dialog>
-        )}
-      </div>
 
-      <div className="flex flex-col justify-center w-[95%]">
-        <Table className="mb-5">
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-base">Produto</TableHead>
-              <TableHead className="text-base">Categoria</TableHead>
-              <TableHead className="text-base">Qtd.</TableHead>
-              <TableHead className="text-base">Localização</TableHead>
-              {admin && <TableHead></TableHead>}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {displayedProducts?.map((product) => {
-              return (
-                <TableRow key={product.id}>
-                  <TableCell className="p-3">{product.name}</TableCell>
-                  <TableCell className="p-3">{product.category}</TableCell>
-                  <TableCell className="p-3">{product.quantity}</TableCell>
-                  <TableCell className="p-3">{product.localization}</TableCell>
-                  {admin && (
-                    <TableCell className="text-center p-2">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant={'ghost'} size={'icon'}>
-                            <Pencil />
-                          </Button>
-                        </DialogTrigger>
-                        <CreateProductDialog product={product} />
-                      </Dialog>
+        <div className="flex flex-col justify-center w-[95%]">
+          <Table className="mb-5">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-base">Produto</TableHead>
+                <TableHead className="text-base">Categoria</TableHead>
+                <TableHead className="text-base">Qtd.</TableHead>
+                <TableHead className="text-base">Localização</TableHead>
+                {admin && <TableHead></TableHead>}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {displayedProducts?.map((product) => {
+                return (
+                  <TableRow key={product.id}>
+                    <TableCell className="p-3">{product.name}</TableCell>
+                    <TableCell className="p-3">{product.category}</TableCell>
+                    <TableCell className="p-3">{product.quantity}</TableCell>
+                    <TableCell className="p-3">
+                      {product.localization}
                     </TableCell>
-                  )}
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-        <div className="flex justify-between">
-          <span className="text-sm">
-            {displayedMeta?.totalCount > 0
-              ? displayedMeta.totalCount
-              : 'Carregando...'}{' '}
-            {displayedMeta?.totalCount === 1 ? 'Item' : 'Items'}
-          </span>
-          <Pagination totalPages={displayedMeta?.totalPages} />
+                    {admin && (
+                      <TableCell className="text-center p-2">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant={'ghost'} size={'icon'}>
+                              <Pencil />
+                            </Button>
+                          </DialogTrigger>
+                          <CreateProductDialog product={product} />
+                        </Dialog>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+          <div className="flex justify-between">
+            <span className="text-sm">
+              {displayedMeta?.totalCount > 0
+                ? displayedMeta.totalCount
+                : 'Carregando...'}{' '}
+              {displayedMeta?.totalCount === 1 ? 'Item' : 'Items'}
+            </span>
+            <Pagination totalPages={displayedMeta?.totalPages} />
+          </div>
         </div>
       </div>
-    </div>
+    </Suspense>
   )
 }
