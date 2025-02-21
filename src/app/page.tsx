@@ -20,6 +20,7 @@ import { getProduct, GetProductResponse } from '@/api/products/get-products'
 import { z } from 'zod'
 import { getSearchedProducts } from '@/api/products/get-searched-products'
 import { useAdmin } from '@/hooks/adminContext'
+import { FreeModeToast } from '@/components/freemode-snackbar'
 
 export default function Home() {
   const { admin } = useAdmin()
@@ -64,6 +65,7 @@ export default function Home() {
 
   return (
     <div className="relative flex flex-col gap-6 items-center w-full flex-1 p-6">
+      <FreeModeToast />
       <h1 className="text-[25px] font-medium">Estoque</h1>
       <div className="flex w-[95%] justify-between">
         <div>
