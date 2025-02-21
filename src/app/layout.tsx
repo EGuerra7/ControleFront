@@ -7,6 +7,7 @@ import { AdminProvider } from '@/hooks/adminContext'
 import { Toaster } from '@/components/ui/toaster'
 import { Aside } from '@/components/aside'
 import { Suspense } from 'react'
+import { FreeModeAlert } from '@/components/freemode-snackbar'
 
 const baloo = Baloo_2({
   variable: '--font-baloo-2',
@@ -37,6 +38,7 @@ export default function RootLayout({
             <div className="flex ml-[90px] justify-center w-full min-h-screen">
               <NuqsAdapter>
                 <QueryClientProviderWrapper>
+                  <FreeModeAlert />
                   {children}
                 </QueryClientProviderWrapper>
               </NuqsAdapter>
