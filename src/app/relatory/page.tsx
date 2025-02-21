@@ -186,7 +186,7 @@ export default function Relatory() {
             {displayedMeta?.totalCount > 0
               ? displayedMeta?.totalCount
               : 'Carregando...'}{' '}
-            {displayedMeta?.totalCount === 1 ? 'Item' : 'Items'}
+            {displayedMeta?.totalCount === 1 ? 'Item' : 'Itens'}
           </span>
           <Pagination totalPages={displayedMeta?.totalPages} />
         </div>

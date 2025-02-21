@@ -95,7 +95,7 @@ export default function LogIn() {
               className="flex flex-col gap-5 items-center justify-center"
             >
               <Input placeholder="Usuário" {...register('user')} />
-              <Input placeholder="Senha" {...register('password')} />
+              <Input type="password" placeholder="Senha" {...register('password')} />
 
               <Button type="submit" className="w-full mt-4">
                 Entrar
